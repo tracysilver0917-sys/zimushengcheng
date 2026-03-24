@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片字幕生成器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-bg" aria-hidden="true"></div>
+    <div class="app-root">
+    <header class="app-header">
+      <div class="app-header__brand">
+        <h1 class="app-title">图片字幕生成器</h1>
+        <p class="app-tagline">本地画布合成 · 隐私留在本机</p>
+      </div>
+      <span class="header-brand" id="brand-tag">丹丹子的AI编程作品</span>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel--controls" aria-label="配置与操作">
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">上传图片</h2>
+            <span class="card-step">01</span>
+          </div>
+          <input
+            type="file"
+            id="file-input"
+            class="visually-hidden"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
+            aria-label="选择图片文件"
+          />
+          <button type="button" class="btn btn-primary" id="btn-pick">
+            + 选择图片
+          </button>
+          <p class="file-name" id="file-name" title="">未选择文件</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">字幕设置</h2>
+            <span class="card-step">02</span>
+          </div>
+          <div class="form-grid">
+            <label class="field" for="subtitle-height">
+              <span class="field-label">字幕高度</span>
+              <span class="field-input-wrap">
+                <input
+                  type="number"
+                  id="subtitle-height"
+                  min="1"
+                  max="9999"
+                  value="72"
+                  inputmode="numeric"
+                />
+                <span class="suffix">px</span>
+              </span>
+              <p class="field-hint" id="subtitle-height-hint">上传图片后将按图高自动匹配</p>
+            </label>
+            <div class="field field--font-scale">
+              <span class="field-label" id="font-size-scale-label">字号（相对字幕条）</span>
+              <div class="slider-wrap">
+                <input
+                  type="range"
+                  id="font-size-scale"
+                  min="28"
+                  max="78"
+                  value="52"
+                  step="1"
+                  aria-labelledby="font-size-scale-label"
+                />
+                <div class="slider-meta">
+                  <span>细</span>
+                  <span class="slider-value" id="font-scale-pct" aria-hidden="true">52%</span>
+                  <span>粗</span>
+                </div>
+              </div>
+              <div class="font-size-foot">
+                <div class="field-input-wrap field-input-wrap--narrow">
+                  <input
+                    type="number"
+                    id="font-size"
+                    min="8"
+                    max="999"
+                    value="38"
+                    inputmode="numeric"
+                    aria-label="字号像素值"
+                  />
+                  <span class="suffix">px</span>
+                </div>
+                <p class="font-size-hint" id="font-size-hint">上传图片后自动换算为像素</p>
+              </div>
+            </div>
+            <label class="field field--color" for="font-color">
+              <span class="field-label">字体颜色</span>
+              <span class="field-input-wrap field-input-wrap--color">
+                <input type="color" id="font-color" value="#ffffff" aria-label="字体颜色色板" />
+                <input
+                  type="text"
+                  id="font-color-hex"
+                  class="hex-input"
+                  maxlength="7"
+                  value="#ffffff"
+                  spellcheck="false"
+                  aria-label="字体颜色十六进制"
+                />
+              </span>
+            </label>
+            <label class="field field--color" for="outline-color">
+              <span class="field-label">轮廓颜色</span>
+              <span class="field-input-wrap field-input-wrap--color">
+                <input type="color" id="outline-color" value="#000000" aria-label="轮廓颜色色板" />
+                <input
+                  type="text"
+                  id="outline-color-hex"
+                  class="hex-input"
+                  maxlength="7"
+                  value="#000000"
+                  spellcheck="false"
+                  aria-label="轮廓颜色十六进制"
+                />
+              </span>
+            </label>
+            <label class="field" for="font-family">
+              <span class="field-label">字体样式</span>
+              <select id="font-family">
+                <option value="system" selected>系统默认</option>
+                <option value="sans">无衬线（现代黑体）</option>
+                <option value="hei">黑体（雅黑 / 苹方）</option>
+                <option value="song">宋体（正文）</option>
+                <option value="kai">楷体</option>
+                <option value="fang">仿宋</option>
+                <option value="yuan">圆体</option>
+                <option value="xingkai">行楷（标题感）</option>
+                <option value="serif">衬线（英文）</option>
+                <option value="mono">等宽</option>
+              </select>
+            </label>
+            <label class="field" for="font-weight">
+              <span class="field-label">字体粗细</span>
+              <select id="font-weight">
+                <option value="400" selected>正常</option>
+                <option value="700">粗体</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="card card--fancy">
+          <div class="card-head">
+            <h2 class="card-title">花字样式</h2>
+            <span class="card-step">03</span>
+          </div>
+          <p class="card-hint">
+            除「标准描边」外，各花字为固定配色与层次；仅标准描边使用上方的字体颜色与轮廓颜色。
+          </p>
+          <div
+            class="fancy-grid"
+            id="fancy-grid"
+            role="listbox"
+            aria-label="花字样式"
+            aria-activedescendant="fancy-classic"
+          >
+            <button
+              type="button"
+              class="fancy-tile selected"
+              id="fancy-classic"
+              role="option"
+              aria-selected="true"
+              data-fancy="classic"
+              title="标准描边"
+            >
+              <span class="fancy-tile-demo fancy-tile-demo--classic">花字</span>
+              <span class="fancy-tile-name">标准描边</span>
+            </button>
+            <button
+              type="button"
+              class="fancy-tile"
+              id="fancy-thick_pop"
+              role="option"
+              data-fancy="thick_pop"
+              title="加粗漫画边"
+            >
+              <span class="fancy-tile-demo fancy-tile-demo--thick">花字</span>
+              <span class="fancy-tile-name">加粗漫画</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-neon_cyan" role="option" data-fancy="neon_cyan" title="青色霓虹">
+              <span class="fancy-tile-demo fancy-tile-demo--neon-cyan">花字</span>
+              <span class="fancy-tile-name">霓虹青</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-neon_gold" role="option" data-fancy="neon_gold" title="金色光晕">
+              <span class="fancy-tile-demo fancy-tile-demo--neon-gold">花字</span>
+              <span class="fancy-tile-name">金光晕</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-grad_warm" role="option" data-fancy="grad_warm" title="暖色渐变填充">
+              <span class="fancy-tile-demo fancy-tile-demo--grad-warm">花字</span>
+              <span class="fancy-tile-name">暖阳渐变</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-grad_purple" role="option" data-fancy="grad_purple" title="紫粉渐变">
+              <span class="fancy-tile-demo fancy-tile-demo--grad-purple">花字</span>
+              <span class="fancy-tile-name">魅紫渐变</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-shadow_3d" role="option" data-fancy="shadow_3d" title="立体拖影">
+              <span class="fancy-tile-demo fancy-tile-demo--3d">花字</span>
+              <span class="fancy-tile-name">立体阴影</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-double_outline" role="option" data-fancy="double_outline" title="双层描边">
+              <span class="fancy-tile-demo fancy-tile-demo--double">花字</span>
+              <span class="fancy-tile-name">双层轮廓</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-ice_blue" role="option" data-fancy="ice_blue" title="冷色高亮边">
+              <span class="fancy-tile-demo fancy-tile-demo--ice">花字</span>
+              <span class="fancy-tile-name">冰霜亮边</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-pop_red" role="option" data-fancy="pop_red" title="红底强对比">
+              <span class="fancy-tile-demo fancy-tile-demo--pop">花字</span>
+              <span class="fancy-tile-name">醒目红边</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-soft_white" role="option" data-fancy="soft_white" title="柔光白字">
+              <span class="fancy-tile-demo fancy-tile-demo--soft">花字</span>
+              <span class="fancy-tile-name">柔光白字</span>
+            </button>
+            <button type="button" class="fancy-tile" id="fancy-metal" role="option" data-fancy="metal" title="金属渐变">
+              <span class="fancy-tile-demo fancy-tile-demo--metal">花字</span>
+              <span class="fancy-tile-name">金属质感</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">字幕内容</h2>
+            <span class="card-step">04</span>
+          </div>
+          <label class="visually-hidden" for="subtitle-text">字幕内容，每行一条</label>
+          <textarea
+            id="subtitle-text"
+            class="subtitle-textarea"
+            rows="6"
+            placeholder="每行一条字幕，例如：&#10;我是法师&#10;嘿嘿&#10;帅吗&#10;迷死你"
+          >我是法师
+嘿嘿
+帅吗
+迷死你</textarea>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary btn-block" id="btn-generate" disabled>
+            生成字幕图片
+          </button>
+          <button type="button" class="btn btn-secondary btn-block" id="btn-save" disabled>
+            保存图片
+          </button>
+        </div>
+      </section>
+
+      <section class="panel panel--preview" aria-label="预览">
+        <div class="preview-head">
+          <div>
+            <p class="preview-kicker">Live preview</p>
+            <h2 class="preview-heading">画布预览</h2>
+          </div>
+          <span class="preview-badge">导出与所见一致</span>
+        </div>
+        <div class="preview-box" id="preview-box">
+          <p class="preview-placeholder" id="preview-placeholder">
+            选择图片并点击「生成字幕图片」后在此预览
+          </p>
+          <canvas id="preview-canvas" class="preview-canvas hidden" width="1" height="1"></canvas>
+        </div>
+      </section>
+    </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
